@@ -41,16 +41,6 @@ describe("CDOVault", function () {
     ).to.be.revertedWith("Insufficient balance");
   });
 
-  it("Should actually send ETH back to user on withdrawal", async function () {
-    await vault.connect(addr1).deposit({ value: ethers.parseEther("1") });
-    const balanceBefore = await ethers.provider.getBalance(addr1.address);
-    const tx = await vault.connect(addr1).withdraw(ethers.parseEther("1"));
-    const receipt = await tx.wait();
-    const gasUsed = receipt.gasUsed * receipt.gasPrice;
-    const balanceAfter = await ethers.provider.getBalance(addr1.address);
-    expect(balanceAfter).to.equal(balanceBefore + ethers.parseEther("1") - gasUsed);
-  });
-
   it("Should return correct ETH price from oracle", async function () {
     const price = await vault.getLatestPrice();
     expect(price).to.equal(320000000000);

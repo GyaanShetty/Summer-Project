@@ -18,11 +18,16 @@ async function main() {
   const junior = await TrancheToken.deploy("Junior Tranche", "jCDO", deployer.address);
   await junior.waitForDeployment();
   console.log("Junior Tranche deployed to:", await junior.getAddress());
+  const CollateralManager = await hre.ethers.getContractFactory("CollateralManager");
+  const collateralManager = await CollateralManager.deploy(deployer.address);
+  await collateralManager.waitForDeployment();
+  console.log("CollateralManager deployed to:", await collateralManager.getAddress());
+
 
   const SEPOLIA_ETH_USD_FEED = "0x694AA1769357215DE4FAC081bf1f309aDC325306";
 
   const CDOVault = await hre.ethers.getContractFactory("CDOVault");
-  const vault = await CDOVault.deploy(SEPOLIA_ETH_USD_FEED);
+  const vault = await CDOVault.deploy(SEPOLIA_ETH_USD_FEED, await collateralManager.getAddress());
   await vault.waitForDeployment();
   console.log("CDOVault deployed to:", await vault.getAddress());
 }
